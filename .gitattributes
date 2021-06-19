@@ -1,0 +1,10 @@
+* text=auto
+
+# main codes
+*.go text eol=lf
+
+# tools
+*.sh text eol=lf
+
+# docs
+*.md text eol=lf

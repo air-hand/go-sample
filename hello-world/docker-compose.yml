@@ -1,0 +1,13 @@
+version: '3'
+services:
+  helloworld:
+    build:
+      context: .
+      target: ${CONTAINER_BUILD_TARGET}
+    # for remote-container development
+    command: sleep infinity
+#    command: go run .
+    environment:
+      CONTAINER_BUILD_TARGET: 'prod'
+    volumes:
+      - ./:/opt/app

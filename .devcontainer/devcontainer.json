@@ -1,0 +1,15 @@
+{
+  "name": "Remote debug",
+  "dockerComposeFile": [
+    "../hello-world/docker-compose.yml",
+    "./docker-compose.extend.yml",
+  ],
+  "service": "helloworld",
+  "workspaceFolder": "/opt/app/",
+  "extensions": [
+    "golang.go",
+  ],
+  "settings": {
+  },
+  "shutdownAction": "stopCompose",
+}
