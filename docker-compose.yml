@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      target: ${CONTAINER_BUILD_TARGET}
+    command: /go-app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/opt/app
