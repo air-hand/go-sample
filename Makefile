@@ -15,17 +15,17 @@ build:
 
 .PHONY: up
 up: build
-	docker compose up;
+	CONTAINER_BUILD_TARGET=$(CONTAINER_BUILD_TARGET) docker compose up;
 
 .PHONY: shell
-shell: CONTAINER_BUILD_TARGET=builder
+shell: export CONTAINER_BUILD_TARGET=builder
 shell: build
 	docker compose run --rm web /bin/zsh;
 
 .PHONY: stop
 stop:
-	docker compose stop;
+	CONTAINER_BUILD_TARGET=$(CONTAINER_BUILD_TARGET) docker compose stop;
 
 .PHONY: clean
 clean: stop
-	docker compose rm -f;
+	CONTAINER_BUILD_TARGET=$(CONTAINER_BUILD_TARGET) docker compose down --volumes --remove-orphans;
