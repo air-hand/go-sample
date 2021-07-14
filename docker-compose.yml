@@ -8,3 +8,5 @@ services:
       - "8080:80"
     volumes:
       - ./:/opt/app
+      - ~/.gitconfig:/home/app/.gitconfig
+      - ~/.ssh:/home/app/.ssh
