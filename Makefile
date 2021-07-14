@@ -1,4 +1,4 @@
-CONTAINER_BUILD_TARGET=prod
+BUILD_TARGET=prod
 
 .PHONY: all
 all:
@@ -11,21 +11,25 @@ all:
 
 .PHONY: build
 build:
-	CONTAINER_BUILD_TARGET=$(CONTAINER_BUILD_TARGET) docker compose build;
+	if [ "$(BUILD_TARGET)" = "builder" ]; then \
+		docker compose -f docker-compose.yml -f .devcontainer/docker-compose.extend.yml build; \
+	else \
+		docker compose build; \
+	fi
 
 .PHONY: up
 up: build
-	CONTAINER_BUILD_TARGET=$(CONTAINER_BUILD_TARGET) docker compose up;
+	BUILD_TARGET=$(BUILD_TARGET) docker compose up;
 
 .PHONY: shell
-shell: export CONTAINER_BUILD_TARGET=builder
+shell: export BUILD_TARGET=builder
 shell: build
 	docker compose run --rm web /bin/bash;
 
 .PHONY: stop
 stop:
-	CONTAINER_BUILD_TARGET=$(CONTAINER_BUILD_TARGET) docker compose stop;
+	BUILD_TARGET=$(BUILD_TARGET) docker compose stop;
 
 .PHONY: clean
 clean: stop
-	CONTAINER_BUILD_TARGET=$(CONTAINER_BUILD_TARGET) docker compose down --volumes --remove-orphans;
+	BUILD_TARGET=$(BUILD_TARGET) docker compose down --volumes --remove-orphans;
