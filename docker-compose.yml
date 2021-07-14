@@ -3,9 +3,10 @@ services:
   web:
     build:
       context: .
-      target: ${CONTAINER_BUILD_TARGET}
-    command: /go-app
+    command: /go/bin/app
     ports:
       - "8080:80"
     volumes:
       - ./:/opt/app
+      - ~/.gitconfig:/home/app/.gitconfig
+      - ~/.ssh:/home/app/.ssh
