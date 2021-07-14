@@ -1,12 +1,17 @@
 FROM golang:1.16-buster as builder
 
-RUN apt-get update -qq \
-    && apt-get install -y zsh git tig \
-    && chsh -s /bin/zsh \
-    && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | zsh \
+RUN echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/backports.list \
+    && apt-get update -qq \
+    && apt-get install -y zsh git/buster-backports tig vim less bash \
+    && curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-completion.bash -o $HOME/.git-completion.bash \
+    && curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-prompt.sh -o $HOME/.git-prompt.sh \
+    && chmod a+x $HOME/.git* \
+    && echo "source ~/.git-completion.bash" >> $HOME/.bashrc \
+    && echo "source ~/.git-prompt.sh" >> $HOME/.bashrc \
+    && echo "export PS1=\"\u@\w\$(__git_ps1)\\$ \"" >> $HOME/.bashrc \
     ;
 
-ENV GO111MODULE=on
+ENV GO111MODULE=on EDITOR=vim
 
 RUN go get golang.org/x/tools/gopls@latest \
     && go get -u github.com/lukehoban/go-outline

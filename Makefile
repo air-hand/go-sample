@@ -20,7 +20,7 @@ up: build
 .PHONY: shell
 shell: export CONTAINER_BUILD_TARGET=builder
 shell: build
-	docker compose run --rm web /bin/zsh;
+	docker compose run --rm web /bin/bash;
 
 .PHONY: stop
 stop:
