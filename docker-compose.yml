@@ -3,7 +3,7 @@ services:
   web:
     build:
       context: .
-    command: /go-app
+    command: /go/bin/app
     ports:
       - "8080:80"
     volumes:
