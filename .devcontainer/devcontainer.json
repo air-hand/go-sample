@@ -11,6 +11,9 @@
     "editorconfig.editorconfig",
   ],
   "settings": {
+    "gopls": {
+      "build.experimentalWorkspaceModule": true
+    }
   },
   "shutdownAction": "stopCompose",
 }
