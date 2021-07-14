@@ -11,11 +11,10 @@ ENV GO111MODULE=on
 RUN go get golang.org/x/tools/gopls@latest \
     && go get -u github.com/lukehoban/go-outline
 
-WORKDIR /opt/app
+WORKDIR /opt/app/src
 
-COPY web/ /opt/app/web/
-COPY Makefile go.* *.go .editorconfig /opt/app/
-#COPY * /opt/app/
+COPY src ./
+COPY Makefile .editorconfig ../
 
 RUN go mod download
 
