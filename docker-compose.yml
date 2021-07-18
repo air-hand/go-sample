@@ -9,4 +9,4 @@ services:
     volumes:
       - ./:/opt/app
       - ~/.gitconfig:/home/app/.gitconfig
-      - ~/.ssh:/home/app/.ssh
+      - ~/.ssh:/home/app/.ssh:ro
