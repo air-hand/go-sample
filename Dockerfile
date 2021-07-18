@@ -31,7 +31,6 @@ RUN curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-comp
 WORKDIR /opt/app/src
 
 COPY --chown=$USER:$USER src ./
-COPY --chown=$USER:$USER Makefile .editorconfig ../
 
 RUN go get golang.org/x/tools/gopls@latest \
     && go get -u github.com/lukehoban/go-outline
@@ -40,6 +39,7 @@ RUN go mod download
 
 RUN go build -o /go/bin/app
 
+COPY --chown=$USER:$USER Makefile .editorconfig ../
 COPY --chown=$USER:$USER .bashrc .vimrc $HOME/
 
 # multi stage build for slim
