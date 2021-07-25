@@ -8,20 +8,22 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sou
     && fc-cache -fv \
     ;
 
-ENV USER=app \
+#ENV USER=app \
+ENV USER=root \
     GO111MODULE=on \
     EDITOR=vim \
     LANG=C.UTF-8
 
-RUN addgroup wheel \
-    && echo "auth sufficient pam_wheel.so trust group=wheel" >> /etc/pam.d/su \
-    && echo "%wheel ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-    && useradd -s /bin/bash -m -G wheel $USER \
-    ;
+#RUN addgroup wheel \
+#    && echo "auth sufficient pam_wheel.so trust group=wheel" >> /etc/pam.d/su \
+#    && echo "%wheel ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+#    && useradd -s /bin/bash -m -G wheel $USER \
+#    ;
 
 USER $USER
 
-ENV HOME=/home/$USER
+#ENV HOME=/home/$USER
+ENV HOME=/$USER
 
 RUN curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash \
     && curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh \
@@ -30,10 +32,10 @@ RUN curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-comp
 
 WORKDIR /opt/app/src
 
-COPY --chown=$USER:$USER src ./
-
 RUN go get golang.org/x/tools/gopls@latest \
     && go get -u github.com/lukehoban/go-outline
+
+COPY --chown=$USER:$USER src ./
 
 RUN go mod download
 
