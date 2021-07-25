@@ -9,6 +9,15 @@ type User struct {
 	BirthDate   time.Time
 }
 
+// assign function to struct.
+func (user *User) GetName() string {
+	return user.Name
+}
+
+func (user *User) GetAge() int {
+	return user.Age
+}
+
 func StructSample(name string, age int) User {
 	user := User{
 		Name:        name,
