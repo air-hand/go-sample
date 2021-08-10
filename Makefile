@@ -27,9 +27,9 @@ test:
 	IS_IN_CONTAINER=$$(test -f /.dockerenv && echo 0 || echo 1); \
 	if [ $$IS_IN_CONTAINER -eq 0 ]; then \
 		cd src; \
-		cd fundamentals; go test; cd ..; \
-		cd web; go test; cd ..; \
-		go test; \
+		cd fundamentals; go test -v; cd ..; \
+		cd web; go test -v; cd ..; \
+		go test -v; \
 	else \
 		echo "test should be run in container."; \
 	fi
