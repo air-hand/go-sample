@@ -27,9 +27,8 @@ test:
 	IS_IN_CONTAINER=$$(test -f /.dockerenv && echo 0 || echo 1); \
 	if [ $$IS_IN_CONTAINER -eq 0 ]; then \
 		cd src; \
-		cd fundamentals; go test -v; cd ..; \
-		cd web; go test -v; cd ..; \
-		go test -v; \
+		find ./ -name "go.mod" | xargs -I{} readlink -e {} | xargs -I{} dirname {} | \
+		xargs -I{} sh -c "cd {}; go test -test.v"; \
 	else \
 		echo "test should be run in container."; \
 	fi
