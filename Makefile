@@ -28,7 +28,7 @@ test:
 	if [ $$IS_IN_CONTAINER -eq 0 ]; then \
 		cd src; \
 		find ./ -name "go.mod" | xargs -I{} readlink -e {} | xargs -I{} dirname {} | \
-		xargs -I{} sh -c "cd {}; go test -test.v"; \
+		xargs -I{} sh -c "cd {}; go test -test.v -cover"; \
 	else \
 		echo "test should be run in container."; \
 	fi
