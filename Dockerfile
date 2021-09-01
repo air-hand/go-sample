@@ -33,7 +33,10 @@ RUN curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-comp
 WORKDIR /opt/app/src
 
 RUN go get golang.org/x/tools/gopls@latest \
-    && go get -u github.com/lukehoban/go-outline
+    && go get -u github.com/ramya-rao-a/go-outline \
+    && go install github.com/go-delve/delve/cmd/dlv@master \
+    && mv $GOPATH/bin/dlv $GOPATH/bin/dlv-dap \
+    ;
 
 COPY --chown=$USER:$USER src ./
 
