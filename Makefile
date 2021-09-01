@@ -4,6 +4,7 @@ BUILD_TARGET=prod
 all:
 	IS_IN_CONTAINER=$$(test -f /.dockerenv && echo 0 || echo 1); \
 	if [ $$IS_IN_CONTAINER -eq 0 ]; then \
+		cd src; \
 		go build -o /go/bin/app; \
 	else \
 		make build; \
@@ -20,6 +21,17 @@ build:
 .PHONY: up
 up: build
 	BUILD_TARGET=$(BUILD_TARGET) docker compose up;
+
+.PHONY: test
+test:
+	IS_IN_CONTAINER=$$(test -f /.dockerenv && echo 0 || echo 1); \
+	if [ $$IS_IN_CONTAINER -eq 0 ]; then \
+		cd src; \
+		find ./ -name "go.mod" | xargs -I{} readlink -e {} | xargs -I{} dirname {} | \
+		xargs -I{} sh -c "cd {}; go test -test.v -cover"; \
+	else \
+		echo "test should be run in container."; \
+	fi
 
 .PHONY: shell
 shell: export BUILD_TARGET=builder
