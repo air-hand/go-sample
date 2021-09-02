@@ -43,7 +43,9 @@ RUN go mod download
 
 RUN go build -o /go/bin/app
 
-COPY --chown=$USER:$USER Makefile .editorconfig ../
+WORKDIR /opt/app
+
+COPY --chown=$USER:$USER Makefile .editorconfig ./
 COPY --chown=$USER:$USER .bashrc .vimrc $HOME/
 
 # multi stage build for slim
