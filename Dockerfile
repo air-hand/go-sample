@@ -1,9 +1,8 @@
-FROM golang:1.16-buster as builder
+FROM golang:1.17-bullseye as builder
 
-RUN echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/backports.list \
-    && echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.list.d/bullseye.list \
+RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update -qq \
-    && apt-get install -y git/buster-backports tig/bullseye vim less bash sudo \
+    && apt-get install -y git tig vim less bash sudo \
     && apt-get install -y fontconfig fonts-noto-cjk \
     && fc-cache -fv \
     ;
