@@ -2,12 +2,13 @@ module main
 
 go 1.17
 
+require local.packages/web v0.0.0
+
 require (
-	github.com/golang/glog v0.0.0-20210429001901-424d2337a529 // indirect
-	local.packages/web v0.0.0
-	local.packages/fundamentals v0.0.0
-	rsc.io/quote v1.5.2
+	github.com/lestrrat-go/strftime v1.0.5 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
 )
 
 replace local.packages/web => ./web
+
 replace local.packages/fundamentals => ./fundamentals
