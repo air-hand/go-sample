@@ -2,18 +2,30 @@ package web
 
 import (
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/lestrrat-go/strftime"
 )
 
+func renderTemplate(w http.ResponseWriter, tmpl string) {
+	// TODO: I want to use path as relative... how?
+	parsed, _ := template.ParseFiles("/opt/app/src/web/" + "templates/" + tmpl)
+	err := parsed.Execute(w, nil)
+	if err != nil {
+		log.Println("error parsing :", err)
+		return
+	}
+}
+
 func home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Home page")
+	renderTemplate(w, "home.page.tmpl")
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "About")
+	renderTemplate(w, "about.page.tmpl")
 }
 
 func now_time(w http.ResponseWriter, r *http.Request) {
