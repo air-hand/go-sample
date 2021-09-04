@@ -13,7 +13,11 @@
   "settings": {
     "gopls": {
       "build.experimentalWorkspaceModule": true
-    }
+    },
+    "files.associations": {
+      "*.tmpl": "html"
+    },
+    "html.suggest.html5": true
   },
   "shutdownAction": "stopCompose",
 }
