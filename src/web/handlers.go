@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -9,11 +10,27 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "home.page.tmpl")
+	t, _ := loadTemplate("home.page.tmpl")
+	err := t.Execute(w, struct {
+		Title string
+	}{
+		Title: "Home",
+	})
+	if err != nil {
+		log.Fatalln("Failed to renderer template", err)
+	}
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "about.page.tmpl")
+	t, _ := loadTemplate("about.page.tmpl")
+	err := t.Execute(w, struct {
+		Title string
+	}{
+		Title: "About",
+	})
+	if err != nil {
+		log.Fatalln("Failed to renderer template", err)
+	}
 }
 
 func now_time(w http.ResponseWriter, r *http.Request) {
