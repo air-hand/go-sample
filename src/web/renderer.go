@@ -1,26 +1,29 @@
 package web
 
 import (
+	"embed"
 	"html/template"
 	"log"
 )
 
 var caches = map[string]*template.Template{}
 
+//go:embed templates
+var fs embed.FS
+
 func loadTemplate(tmpl string) (*template.Template, error) {
 	if t, exists := caches[tmpl]; exists {
 		log.Printf("The cache found : %s", tmpl)
 		return t, nil
 	}
-	// TODO: I want to use path as relative... how?
-	t, err := template.ParseFiles(
-		"/opt/app/src/web/" + "templates/" + tmpl,
+	t, err := template.ParseFS(
+		fs, "templates/"+tmpl,
 	)
 	if err != nil {
 		return t, err
 	}
-	t, err = t.ParseGlob(
-		"/opt/app/src/web/templates/layouts/*.tmpl",
+	t, err = t.ParseFS(
+		fs, "templates/layouts/*.tmpl",
 	)
 	if err != nil {
 		return t, err
