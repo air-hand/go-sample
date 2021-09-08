@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -42,5 +41,17 @@ func now_time(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	fmt.Fprintf(w, "Now %s", p.FormatString(time.Now().In(loc)))
+	now_string := p.FormatString(time.Now().In(loc))
+
+	t := findTemplate("now.page.tmpl")
+	err = t.Execute(w, struct {
+		Title string
+		Time  string
+	}{
+		Title: "Now",
+		Time:  now_string,
+	})
+	if err != nil {
+		log.Fatalln("Failed to renderer template", err)
+	}
 }
