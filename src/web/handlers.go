@@ -1,6 +1,7 @@
 package web
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 	"time"
@@ -10,7 +11,8 @@ import (
 
 func home(w http.ResponseWriter, r *http.Request) {
 	t := findTemplate("home.page.tmpl")
-	err := t.Execute(w, struct {
+	buffer := new(bytes.Buffer)
+	err := t.Execute(buffer, struct {
 		Title string
 	}{
 		Title: "Home",
@@ -18,6 +20,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln("Failed to renderer template", err)
 	}
+	buffer.WriteTo(w)
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
