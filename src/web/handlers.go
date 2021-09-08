@@ -10,7 +10,7 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
-	t, _ := loadTemplate("home.page.tmpl")
+	t := findTemplate("home.page.tmpl")
 	err := t.Execute(w, struct {
 		Title string
 	}{
@@ -22,7 +22,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
-	t, _ := loadTemplate("about.page.tmpl")
+	t := findTemplate("about.page.tmpl")
 	err := t.Execute(w, struct {
 		Title string
 	}{
