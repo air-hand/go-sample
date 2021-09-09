@@ -5,10 +5,14 @@ import (
 )
 
 func Serve() {
-	warmupTemplatesCache()
+	config := NewAppConfig()
+	renderer := NewTemplateRenderer(!config.IsDebug)
+	handler := Handler{
+		renderer: renderer,
+	}
 
-	http.HandleFunc("/", home)
-	http.HandleFunc("/about", about)
-	http.HandleFunc("/now", now_time)
+	http.HandleFunc("/", handler.Home)
+	http.HandleFunc("/about", handler.About)
+	http.HandleFunc("/now", handler.NowTime)
 	_ = http.ListenAndServe(":80", nil)
 }

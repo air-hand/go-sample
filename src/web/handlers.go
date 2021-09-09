@@ -1,41 +1,41 @@
 package web
 
 import (
-	"bytes"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/lestrrat-go/strftime"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
-	t := findTemplate("home.page.tmpl")
-	buffer := new(bytes.Buffer)
-	err := t.Execute(buffer, struct {
+type Handler struct {
+	renderer *TemplateRenderer
+}
+
+func (handler *Handler) Home(w http.ResponseWriter, r *http.Request) {
+	buffer := handler.renderer.RenderToBuffer("home.page.tmpl", struct {
 		Title string
 	}{
 		Title: "Home",
 	})
-	if err != nil {
-		log.Fatalln("Failed to renderer template", err)
+	if buffer == nil {
+		return
 	}
 	buffer.WriteTo(w)
 }
 
-func about(w http.ResponseWriter, r *http.Request) {
-	t := findTemplate("about.page.tmpl")
-	err := t.Execute(w, struct {
+func (handler *Handler) About(w http.ResponseWriter, r *http.Request) {
+	buffer := handler.renderer.RenderToBuffer("about.page.tmpl", struct {
 		Title string
 	}{
 		Title: "About",
 	})
-	if err != nil {
-		log.Fatalln("Failed to renderer template", err)
+	if buffer == nil {
+		return
 	}
+	buffer.WriteTo(w)
 }
 
-func now_time(w http.ResponseWriter, r *http.Request) {
+func (handler *Handler) NowTime(w http.ResponseWriter, r *http.Request) {
 	p, err := strftime.New("%Y-%m-%d %H:%M:%S")
 	if err != nil {
 		return
@@ -46,15 +46,15 @@ func now_time(w http.ResponseWriter, r *http.Request) {
 	}
 	now_string := p.FormatString(time.Now().In(loc))
 
-	t := findTemplate("now.page.tmpl")
-	err = t.Execute(w, struct {
+	buffer := handler.renderer.RenderToBuffer("now.page.tmpl", struct {
 		Title string
 		Time  string
 	}{
 		Title: "Now",
 		Time:  now_string,
 	})
-	if err != nil {
-		log.Fatalln("Failed to renderer template", err)
+	if buffer == nil {
+		return
 	}
+	buffer.WriteTo(w)
 }
