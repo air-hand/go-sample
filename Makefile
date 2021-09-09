@@ -1,12 +1,13 @@
 BUILD_TARGET=prod
 
+IS_IN_CONTAINER := $(shell sh -c 'test -f /.dockerenv && echo 0 || echo 1')
+
 .PHONY: all
 all: build
 
 .PHONY: build
 build:
-	IS_IN_CONTAINER=$$(test -f /.dockerenv && echo 0 || echo 1); \
-	if [ $$IS_IN_CONTAINER -eq 0 ]; then \
+	if [ $(IS_IN_CONTAINER) -eq 0 ]; then \
 		cd src; \
 		go build -o /go/bin/app; \
 	elif [ "$(BUILD_TARGET)" = "builder" ]; then \
@@ -17,8 +18,7 @@ build:
 
 .PHONY: up
 up: build
-	IS_IN_CONTAINER=$$(test -f /.dockerenv && echo 0 || echo 1); \
-	if [ $$IS_IN_CONTAINER -eq 0 ]; then \
+	if [ $(IS_IN_CONTAINER) -eq 0 ]; then \
 		/go/bin/app; \
 	else \
 		BUILD_TARGET=$(BUILD_TARGET) docker compose up; \
@@ -26,13 +26,11 @@ up: build
 
 .PHONY: test
 test:
-	IS_IN_CONTAINER=$$(test -f /.dockerenv && echo 0 || echo 1); \
-	if [ $$IS_IN_CONTAINER -eq 1 ]; then \
+	if [ $(IS_IN_CONTAINER) -eq 1 ]; then \
 		echo "test should be run in container."; \
 		return; \
 	fi; \
-	cd src; \
-	find ./ -name "go.mod" | xargs -I{} readlink -e {} | xargs -I{} dirname {} | \
+	find ./src -name "go.mod" | xargs -I{} readlink -e {} | xargs -I{} dirname {} | \
 	xargs -I{} sh -c "cd {}; go test -test.v -cover"; \
 
 .PHONY: shell
