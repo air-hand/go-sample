@@ -24,6 +24,8 @@ USER $USER
 #ENV HOME=/home/$USER
 ENV HOME=/$USER
 
+COPY --chown=$USER:$USER .bashrc .vimrc $HOME/
+
 RUN curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash \
     && curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh \
     && chmod a+x ~/.git-* \
@@ -46,7 +48,6 @@ RUN go build -o /go/bin/app
 WORKDIR /opt/app
 
 COPY --chown=$USER:$USER Makefile .editorconfig ./
-COPY --chown=$USER:$USER .bashrc .vimrc $HOME/
 
 # multi stage build for slim
 FROM gcr.io/distroless/base-debian10:latest as prod
