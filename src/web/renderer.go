@@ -30,8 +30,12 @@ func (cache *TemplateCache) Get(tmpl string) *template.Template {
 	return nil
 }
 
-func (cache *TemplateCache) Warmup(templates embed.FS) {
+func (cache *TemplateCache) clear() {
 	cache.caches = make(map[string]*template.Template)
+}
+
+func (cache *TemplateCache) Warmup(templates embed.FS) {
+	cache.clear()
 	tmpls, err := fs.Glob(templates, "templates/*.tmpl")
 	if err != nil {
 		log.Fatalln("glob err:", err)
