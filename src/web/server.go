@@ -1,18 +1,21 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 )
 
-func Serve() {
+func Serve(portNumber int) {
 	config := NewAppConfig()
 	renderer := NewTemplateRenderer(!config.IsDebug)
 	handler := Handler{
 		renderer: renderer,
 	}
 
-	http.HandleFunc("/", handler.Home)
-	http.HandleFunc("/about", handler.About)
-	http.HandleFunc("/now", handler.NowTime)
-	_ = http.ListenAndServe(":80", nil)
+	server := &http.Server{
+		Addr:    fmt.Sprintf(":%d", portNumber),
+		Handler: Routes(&handler),
+	}
+
+	_ = server.ListenAndServe()
 }
