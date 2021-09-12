@@ -3,13 +3,16 @@ package web
 import (
 	"net/http"
 
-	"github.com/bmizerany/pat"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 func Routes(handler *Handler) http.Handler {
-	muxer := pat.New()
-	muxer.Get("/", http.HandlerFunc(handler.Home))
-	muxer.Get("/about", http.HandlerFunc(handler.About))
-	muxer.Get("/now", http.HandlerFunc(handler.NowTime))
+	muxer := chi.NewRouter()
+	muxer.Use(middleware.Recoverer)
+	muxer.Use(middleware.Logger)
+	muxer.Get("/", handler.Home)
+	muxer.Get("/about", handler.About)
+	muxer.Get("/now", handler.NowTime)
 	return muxer
 }
