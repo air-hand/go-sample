@@ -10,3 +10,18 @@ services:
       - ./:/opt/app
       - ~/.gitconfig:/home/app/.gitconfig
       - ~/.ssh:/home/app/.ssh:ro
+    links:
+      - "mariadb:db"
+  mariadb:
+    image: mariadb:10.6.4
+    restart: always
+    volumes:
+      - db-store:/var/lib/mysql
+    environment:
+      MARIADB_DATABASE: app_db
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+      MARIADB_USER: app
+      MARIADB_PASSWORD: app
+
+volumes:
+  db-store:

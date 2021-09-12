@@ -2,7 +2,11 @@ FROM golang:1.17-bullseye as builder
 
 RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update -qq \
-    && apt-get install -y git tig vim less bash sudo \
+    && apt-get install -y software-properties-common dirmngr apt-file \
+    && apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc' \
+    && add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://tw1.mirror.blendbyte.net/mariadb/repo/10.6/debian bullseye main' \
+    && apt-get update -qq \
+    && apt-get install -y git tig vim less bash sudo mariadb-client \
     && apt-get install -y fontconfig fonts-noto-cjk \
     && fc-cache -fv \
     ;

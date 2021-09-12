@@ -12,6 +12,7 @@ type Handler struct {
 }
 
 func (handler *Handler) Home(w http.ResponseWriter, r *http.Request) {
+	OpenDBClient()
 	buffer := handler.renderer.RenderToBuffer("home.page.tmpl", struct {
 		Title string
 	}{
