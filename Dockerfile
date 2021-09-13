@@ -39,6 +39,7 @@ WORKDIR /opt/app/src
 
 RUN go get golang.org/x/tools/gopls@latest \
     && go get -u github.com/ramya-rao-a/go-outline \
+    && go get github.com/clipperhouse/gen \
     && go install github.com/go-delve/delve/cmd/dlv@master \
     && mv $GOPATH/bin/dlv $GOPATH/bin/dlv-dap \
     ;
