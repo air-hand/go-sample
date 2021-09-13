@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/lestrrat-go/strftime"
+	"gorm.io/gorm"
 )
 
 type Handler struct {
@@ -12,7 +13,6 @@ type Handler struct {
 }
 
 func (handler *Handler) Home(w http.ResponseWriter, r *http.Request) {
-	OpenDBClient()
 	buffer := handler.renderer.RenderToBuffer("home.page.tmpl", struct {
 		Title string
 	}{
@@ -53,6 +53,28 @@ func (handler *Handler) NowTime(w http.ResponseWriter, r *http.Request) {
 	}{
 		Title: "Now",
 		Time:  now_string,
+	})
+	if buffer == nil {
+		return
+	}
+	buffer.WriteTo(w)
+}
+
+func (handler *Handler) DBConn(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	db, exists := ctx.Value("DB").(*gorm.DB)
+	if !exists {
+		panic("DB doesn't exist.")
+	}
+	var version string
+	db.Raw("SELECT VERSION()").Scan(&version)
+
+	buffer := handler.renderer.RenderToBuffer("db.page.tmpl", struct {
+		Title   string
+		Version string
+	}{
+		Title:   "DBConn",
+		Version: version,
 	})
 	if buffer == nil {
 		return

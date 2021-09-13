@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func DatabaseMiddleware(config *AppConfig) func(http.Handler) http.Handler {
+func DatabaseMiddleware(config *DBConnectConfig) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			db := NewDBClient(config)

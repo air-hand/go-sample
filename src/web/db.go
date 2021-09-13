@@ -7,8 +7,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func OpenDBClient() {
-	db, _ := sql.Open("mysql", "app:app@tcp(db:3306)/app_db")
+func OpenDBClientSample() {
+	db_config := NewDBConnectConfigFromEnv()
+	db, _ := sql.Open("mysql", db_config.DSN())
 	defer db.Close()
 
 	var version string

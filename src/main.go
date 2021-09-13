@@ -6,5 +6,6 @@ import (
 
 func main() {
 	println("Start server.")
-	web.Serve(80)
+	server := web.NewServer(80)
+	server.Serve()
 }

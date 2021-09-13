@@ -5,9 +5,21 @@ import (
 	"net/http"
 )
 
-func Serve(portNumber int) {
+type Server struct {
+	PortNumber int
+}
+
+func NewServer(portNumber int) *Server {
+	return &Server{
+		PortNumber: portNumber,
+	}
+}
+
+func (rcv *Server) Serve() {
 	config := NewAppConfig()
-	db := NewDBClient(config)
+
+	db_config := NewDBConnectConfigFromEnv()
+	db := NewDBClient(db_config)
 	MigrateModels(db)
 
 	renderer := NewTemplateRenderer(!config.IsDebug)
@@ -16,8 +28,8 @@ func Serve(portNumber int) {
 	}
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%d", portNumber),
-		Handler: Routes(config, &handler),
+		Addr:    fmt.Sprintf(":%d", rcv.PortNumber),
+		Handler: Routes(db_config, &handler),
 	}
 
 	_ = server.ListenAndServe()

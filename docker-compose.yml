@@ -1,5 +1,19 @@
 version: '3'
+
+x-TZ: &TZ "Asia/Tokyo"
+
 services:
+  mariadb:
+    image: mariadb:10.6.4
+    restart: always
+    volumes:
+      - db-store:/var/lib/mysql
+    environment:
+      TZ: *TZ
+      MARIADB_DATABASE: &MARIADB_DATABASE app_db
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+      MARIADB_USER: &MARIADB_USER app
+      MARIADB_PASSWORD: &MARIADB_PASSWORD app
   web:
     build:
       context: .
@@ -12,16 +26,12 @@ services:
       - ~/.ssh:/home/app/.ssh:ro
     links:
       - "mariadb:db"
-  mariadb:
-    image: mariadb:10.6.4
-    restart: always
-    volumes:
-      - db-store:/var/lib/mysql
     environment:
-      MARIADB_DATABASE: app_db
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
-      MARIADB_USER: app
-      MARIADB_PASSWORD: app
+      TZ: *TZ
+      DB_USER: *MARIADB_USER
+      DB_PASSWORD: *MARIADB_PASSWORD
+      DB_NAME: *MARIADB_DATABASE
+      DB_HOST: "db"
 
 volumes:
   db-store:
