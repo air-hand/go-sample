@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	"local.packages/types"
 )
 
 type AppConfig struct {
@@ -25,23 +27,26 @@ type DBConnectConfig struct {
 	Port     uint16
 	DBName   string
 	Timezone string
-	Data     map[string]string
+	Data     *types.KeyValueList
 }
 
 func (config *DBConnectConfig) DSN() string {
-	config.Data["charset"] = "utf8mb4"
-	config.Data["parseTime"] = "True"
-	config.Data["loc"] = config.Timezone
-	extras := make([]string, 0, 256)
-	for k, v := range config.Data {
+	config.Data.Add(types.KeyValue{Key: "charset", Value: "utf8mb4"})
+	config.Data.Add(types.KeyValue{Key: "parseTime", Value: "True"})
+	config.Data.Add(types.KeyValue{Key: "loc", Value: config.Timezone})
+	config.Data = config.Data.StableSortBy(func(x types.KeyValue, y types.KeyValue) bool {
+		return x.Key < y.Key
+	}).DistinctBy(func(x types.KeyValue, y types.KeyValue) bool {
+		return x.Key == y.Key
+	})
+	extras := config.Data.MapToString(func(kv types.KeyValue) string {
 		bytes := make([]byte, 0, 128)
-		bytes = append(bytes, k...)
+		bytes = append(bytes, kv.Key...)
 		bytes = append(bytes, "="...)
-		bytes = append(bytes, (url.QueryEscape(v))...)
-		extras = append(extras, string(bytes))
-	}
-	extra_string := strings.Join(extras, "&")
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s", config.User, config.Password, config.Host, config.Port, config.DBName, extra_string)
+		bytes = append(bytes, (url.QueryEscape(kv.Value))...)
+		return string(bytes)
+	})
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s", config.User, config.Password, config.Host, config.Port, config.DBName, strings.Join(extras, "&"))
 }
 
 func NewDBConnectConfigFromEnv() *DBConnectConfig {
@@ -52,6 +57,6 @@ func NewDBConnectConfigFromEnv() *DBConnectConfig {
 		Port:     3306,
 		DBName:   os.Getenv("DB_NAME"),
 		Timezone: os.Getenv("TZ"),
-		Data:     make(map[string]string),
+		Data:     types.NewKeyValueList(),
 	}
 }
