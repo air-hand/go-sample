@@ -48,7 +48,7 @@ COPY --chown=$USER:$USER src ./
 
 RUN go mod download
 
-RUN go build -o /go/bin/app
+RUN mkdir -p /go/out && go build -o /go/out/app
 
 WORKDIR /opt/app
 
@@ -57,6 +57,6 @@ COPY --chown=$USER:$USER Makefile .editorconfig ./
 # multi stage build for slim
 FROM gcr.io/distroless/base-debian10:latest as prod
 
-COPY --from=builder /go/bin/app /go/bin/app
+COPY --from=builder /go/out/app /go/out/app
 
-ENTRYPOINT ["/go/bin/app"]
+ENTRYPOINT ["/go/out/app"]
