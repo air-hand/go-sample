@@ -37,9 +37,9 @@ RUN curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-comp
 
 WORKDIR /opt/app/src
 
-RUN go get golang.org/x/tools/gopls@latest \
-    && go get -u github.com/ramya-rao-a/go-outline \
-    && go get github.com/clipperhouse/gen \
+RUN go install golang.org/x/tools/gopls@latest \
+    && go install github.com/ramya-rao-a/go-outline@master \
+    && go install github.com/rickb777/runtemplate/v3@latest \
     && go install github.com/go-delve/delve/cmd/dlv@master \
     && mv $GOPATH/bin/dlv $GOPATH/bin/dlv-dap \
     ;
