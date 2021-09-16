@@ -1,11 +1,13 @@
 package web
 
 import (
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/lestrrat-go/strftime"
 	"gorm.io/gorm"
+	"local.packages/web/models"
 )
 
 type Handler struct {
@@ -68,6 +70,10 @@ func (handler *Handler) DBConn(w http.ResponseWriter, r *http.Request) {
 	}
 	var version string
 	db.Raw("SELECT VERSION()").Scan(&version)
+
+	var users []models.User
+	results := db.Where("name LIKE ?", "%foo%").Find(&users)
+	log.Println("rows:", results.RowsAffected)
 
 	buffer := handler.renderer.RenderToBuffer("db.page.tmpl", struct {
 		Title   string

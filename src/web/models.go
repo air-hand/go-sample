@@ -3,13 +3,8 @@ package web
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"local.packages/web/models"
 )
-
-type Product struct {
-	gorm.Model
-	Code  string
-	Price uint
-}
 
 func NewDBClient(config *DBConnectConfig) *gorm.DB {
 	dsn := config.DSN()
@@ -21,5 +16,6 @@ func NewDBClient(config *DBConnectConfig) *gorm.DB {
 }
 
 func MigrateModels(db *gorm.DB) {
-	db.AutoMigrate(&Product{})
+	db.AutoMigrate(&models.Group{})
+	db.AutoMigrate(&models.User{})
 }
