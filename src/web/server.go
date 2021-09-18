@@ -19,8 +19,6 @@ func (rcv *Server) Serve() {
 	config := NewAppConfig()
 
 	db_config := NewDBConnectConfigFromEnv()
-	db := NewDBClient(db_config)
-	MigrateModels(db)
 
 	renderer := NewTemplateRenderer(!config.IsDebug)
 	handler := Handler{

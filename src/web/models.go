@@ -1,21 +1,16 @@
 package web
 
 import (
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"local.packages/web/models"
+	"database/sql"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func NewDBClient(config *DBConnectConfig) *gorm.DB {
+func NewDBClient(config *DBConnectConfig) *sql.DB {
 	dsn := config.DSN()
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		panic(err)
 	}
 	return db
-}
-
-func MigrateModels(db *gorm.DB) {
-	db.AutoMigrate(&models.Group{})
-	db.AutoMigrate(&models.User{})
 }
