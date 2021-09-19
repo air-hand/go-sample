@@ -13,6 +13,7 @@ RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/s
 
 #ENV USER=app \
 ENV USER=root \
+    GO111MODULE=on \
     EDITOR=vim \
     LANG=C.UTF-8
 
