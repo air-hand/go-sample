@@ -1,12 +1,13 @@
-// //go:build tools
-
 package main
 
 import (
 	"embed"
 	"fmt"
+	"io"
+	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
@@ -19,18 +20,35 @@ import (
 )
 
 //go:embed migrations/*.sql
-var fs embed.FS
+var migrations embed.FS
+
+func copyMigrationsToDir(to_dir string) {
+	to_dir, _ = filepath.Abs(to_dir)
+	sql_files, _ := fs.Glob(migrations, "migrations/*.sql")
+
+	for _, sql_file := range sql_files {
+		from_buf, _ := migrations.Open(sql_file)
+		defer from_buf.Close()
+
+		to := filepath.Join(to_dir, filepath.Base(sql_file))
+		to_buf, _ := os.Create(to)
+		defer to_buf.Close()
+
+		_, err := io.Copy(to_buf, from_buf)
+		if err != nil {
+			log.Fatal("Copy err:", to, err)
+		}
+	}
+}
 
 func main() {
-
-	var tmpdir string
 	tmpdir, err := os.MkdirTemp("", "migrations")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer os.RemoveAll(tmpdir)
 
-	// TODO: Write embed.FS to tempdir
+	copyMigrationsToDir(tmpdir)
 
 	// TODO: maybe should move to another module (neither web and HERE)
 	db_config := web.NewDBConnectConfigFromEnv()
@@ -45,5 +63,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	m.Steps(2)
+	err = m.Steps(2)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -35,6 +35,14 @@ test:
 	find ./src -name "go.mod" | xargs -I{} readlink -e {} | xargs -I{} dirname {} | \
 	xargs -I{} sh -c "cd {}; go test -test.v -cover"; \
 
+.PHONY: migrate
+migrate:
+	if [ $(IS_IN_CONTAINER) -eq 1 ]; then \
+		echo "should be run in container."; \
+		return; \
+	fi; \
+	cd ./src/db-migrates; go run *.go;
+
 .PHONY: shell
 shell: export BUILD_TARGET=builder
 shell: build
