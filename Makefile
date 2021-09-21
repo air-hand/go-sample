@@ -41,7 +41,15 @@ migrate:
 		echo "should be run in container."; \
 		return; \
 	fi; \
-	cd ./src/db-migrates; go run *.go;
+	cd ./src/db-migrates; go run *.go $(MIG_COMMAND);
+
+.PHONY: mig-up
+mig-up: MIG_COMMAND=up
+mig-up: migrate
+
+.PHONY: mig-down
+mig-down: MIG_COMMAND=down
+mig-down: migrate
 
 .PHONY: shell
 shell: export BUILD_TARGET=builder

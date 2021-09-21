@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"fmt"
 	"io"
 	"io/fs"
@@ -16,6 +17,7 @@ import (
 	// _ "github.com/golang-migrate/migrate/v4/source/iofs"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
+	"local.packages/types"
 	"local.packages/web"
 )
 
@@ -42,6 +44,24 @@ func copyMigrationsToDir(to_dir string) {
 }
 
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr,
+			`Usage: mig COMMAND
+COMMAND:
+    up      run up migrations
+    down    run down migrations
+`)
+	}
+
+	flag.Parse()
+
+	if flag.NArg() < 1 {
+		flag.Usage()
+		return
+	}
+
+	command := flag.Arg(0)
+
 	tmpdir, err := os.MkdirTemp("", "migrations")
 	if err != nil {
 		log.Fatal(err)
@@ -52,6 +72,7 @@ func main() {
 
 	// TODO: maybe should move to another module (neither web and HERE)
 	db_config := web.NewDBConnectConfigFromEnv()
+	db_config.Data.Add(types.KeyValue{Key: "multiStatements", Value: "true"})
 	db := web.NewDBClient(db_config)
 	defer db.Close()
 
@@ -62,9 +83,22 @@ func main() {
 	)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
-	err = m.Steps(2)
+	defer m.Close()
+
+	switch command {
+	case "up":
+		err = m.Up()
+	case "down":
+		err = m.Down()
+	default:
+		err = nil
+		flag.Usage()
+	}
+
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
 }
