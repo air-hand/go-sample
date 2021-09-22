@@ -19,5 +19,6 @@ func Routes(db_config *DBConnectConfig, handler *Handler) http.Handler {
 	router.Get("/about", handler.About)
 	router.Get("/now", handler.NowTime)
 	router.Get("/db", handler.DBConn)
+	router.Get("/users", handler.ListUsers)
 	return router
 }
