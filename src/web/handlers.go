@@ -1,11 +1,11 @@
 package web
 
 import (
+	"database/sql"
 	"net/http"
 	"time"
 
 	"github.com/lestrrat-go/strftime"
-	"gorm.io/gorm"
 )
 
 type Handler struct {
@@ -62,12 +62,12 @@ func (handler *Handler) NowTime(w http.ResponseWriter, r *http.Request) {
 
 func (handler *Handler) DBConn(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	db, exists := ctx.Value("DB").(*gorm.DB)
+	db, exists := ctx.Value("DB").(*sql.DB)
 	if !exists {
 		panic("DB doesn't exist.")
 	}
 	var version string
-	db.Raw("SELECT VERSION()").Scan(&version)
+	db.QueryRow("SELECT VERSION()").Scan(&version)
 
 	buffer := handler.renderer.RenderToBuffer("db.page.tmpl", struct {
 		Title   string
