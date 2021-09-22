@@ -51,11 +51,11 @@ func (config *DBConnectConfig) DSN() string {
 
 func NewDBConnectConfigFromEnv() *DBConnectConfig {
 	return &DBConnectConfig{
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		Host:     os.Getenv("DB_HOST"),
+		User:     os.Getenv("MYSQL_USER"),
+		Password: os.Getenv("MYSQL_PASS"),
+		Host:     os.Getenv("MYSQL_HOST"),
 		Port:     3306,
-		DBName:   os.Getenv("DB_NAME"),
+		DBName:   os.Getenv("MYSQL_DBNAME"),
 		Timezone: os.Getenv("TZ"),
 		Data:     types.NewKeyValueList(),
 	}

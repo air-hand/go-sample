@@ -28,10 +28,11 @@ services:
       - "mariadb:db"
     environment:
       TZ: *TZ
-      DB_USER: *MARIADB_USER
-      DB_PASSWORD: *MARIADB_PASSWORD
-      DB_NAME: *MARIADB_DATABASE
-      DB_HOST: "db"
+      # compat for sqlboiler
+      MYSQL_USER: *MARIADB_USER
+      MYSQL_PASS: *MARIADB_PASSWORD
+      MYSQL_DBNAME: *MARIADB_DATABASE
+      MYSQL_HOST: "db"
 
 volumes:
   db-store:
