@@ -1,3 +1,3 @@
 package web
 
-//go:generate sqlboiler mysql
+//go:generate sqlboiler --add-panic-variants mysql

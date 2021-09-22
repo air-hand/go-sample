@@ -359,6 +359,16 @@ func AddTestTableHook(hookPoint boil.HookPoint, testTableHook TestTableHook) {
 	}
 }
 
+// OneP returns a single testTable record from the query, and panics on error.
+func (q testTableQuery) OneP(ctx context.Context, exec boil.ContextExecutor) *TestTable {
+	o, err := q.One(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return o
+}
+
 // One returns a single testTable record from the query.
 func (q testTableQuery) One(ctx context.Context, exec boil.ContextExecutor) (*TestTable, error) {
 	o := &TestTable{}
@@ -378,6 +388,16 @@ func (q testTableQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Te
 	}
 
 	return o, nil
+}
+
+// AllP returns all TestTable records from the query, and panics on error.
+func (q testTableQuery) AllP(ctx context.Context, exec boil.ContextExecutor) TestTableSlice {
+	o, err := q.All(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return o
 }
 
 // All returns all TestTable records from the query.
@@ -400,6 +420,16 @@ func (q testTableQuery) All(ctx context.Context, exec boil.ContextExecutor) (Tes
 	return o, nil
 }
 
+// CountP returns the count of all TestTable records in the query, and panics on error.
+func (q testTableQuery) CountP(ctx context.Context, exec boil.ContextExecutor) int64 {
+	c, err := q.Count(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return c
+}
+
 // Count returns the count of all TestTable records in the query.
 func (q testTableQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -413,6 +443,16 @@ func (q testTableQuery) Count(ctx context.Context, exec boil.ContextExecutor) (i
 	}
 
 	return count, nil
+}
+
+// ExistsP checks if the row exists in the table, and panics on error.
+func (q testTableQuery) ExistsP(ctx context.Context, exec boil.ContextExecutor) bool {
+	e, err := q.Exists(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return e
 }
 
 // Exists checks if the row exists in the table.
@@ -435,6 +475,16 @@ func (q testTableQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (
 func TestTables(mods ...qm.QueryMod) testTableQuery {
 	mods = append(mods, qm.From("`test_table`"))
 	return testTableQuery{NewQuery(mods...)}
+}
+
+// FindTestTableP retrieves a single record by ID with an executor, and panics on error.
+func FindTestTableP(ctx context.Context, exec boil.ContextExecutor, iD uint64, selectCols ...string) *TestTable {
+	retobj, err := FindTestTable(ctx, exec, iD, selectCols...)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return retobj
 }
 
 // FindTestTable retrieves a single record by ID with an executor.
@@ -465,6 +515,14 @@ func FindTestTable(ctx context.Context, exec boil.ContextExecutor, iD uint64, se
 	}
 
 	return testTableObj, nil
+}
+
+// InsertP a single record using an executor, and panics on error. See Insert
+// for whitelist behavior description.
+func (o *TestTable) InsertP(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) {
+	if err := o.Insert(ctx, exec, columns); err != nil {
+		panic(boil.WrapErr(err))
+	}
 }
 
 // Insert a single record using an executor.
@@ -580,6 +638,17 @@ CacheNoHooks:
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateP uses an executor to update the TestTable, and panics on error.
+// See Update for more documentation.
+func (o *TestTable) UpdateP(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) int64 {
+	rowsAff, err := o.Update(ctx, exec, columns)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
+}
+
 // Update uses an executor to update the TestTable.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -649,6 +718,16 @@ func (o *TestTable) Update(ctx context.Context, exec boil.ContextExecutor, colum
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllP updates all rows with matching column names, and panics on error.
+func (q testTableQuery) UpdateAllP(ctx context.Context, exec boil.ContextExecutor, cols M) int64 {
+	rowsAff, err := q.UpdateAll(ctx, exec, cols)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q testTableQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -664,6 +743,16 @@ func (q testTableQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllP updates all rows with the specified column values, and panics on error.
+func (o TestTableSlice) UpdateAllP(ctx context.Context, exec boil.ContextExecutor, cols M) int64 {
+	rowsAff, err := o.UpdateAll(ctx, exec, cols)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -712,6 +801,14 @@ func (o TestTableSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all testTable")
 	}
 	return rowsAff, nil
+}
+
+// UpsertP attempts an insert using an executor, and does an update or ignore on conflict.
+// UpsertP panics on error.
+func (o *TestTable) UpsertP(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) {
+	if err := o.Upsert(ctx, exec, updateColumns, insertColumns); err != nil {
+		panic(boil.WrapErr(err))
+	}
 }
 
 var mySQLTestTableUniqueColumns = []string{
@@ -867,6 +964,18 @@ CacheNoHooks:
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteP deletes a single TestTable record with an executor.
+// DeleteP will match against the primary key column to find the record to delete.
+// Panics on error.
+func (o *TestTable) DeleteP(ctx context.Context, exec boil.ContextExecutor) int64 {
+	rowsAff, err := o.Delete(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
+}
+
 // Delete deletes a single TestTable record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *TestTable) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -903,6 +1012,16 @@ func (o *TestTable) Delete(ctx context.Context, exec boil.ContextExecutor) (int6
 	return rowsAff, nil
 }
 
+// DeleteAllP deletes all rows, and panics on error.
+func (q testTableQuery) DeleteAllP(ctx context.Context, exec boil.ContextExecutor) int64 {
+	rowsAff, err := q.DeleteAll(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
+}
+
 // DeleteAll deletes all matching rows.
 func (q testTableQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
@@ -922,6 +1041,16 @@ func (q testTableQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return rowsAff, nil
+}
+
+// DeleteAllP deletes all rows in the slice, using an executor, and panics on error.
+func (o TestTableSlice) DeleteAllP(ctx context.Context, exec boil.ContextExecutor) int64 {
+	rowsAff, err := o.DeleteAll(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -973,6 +1102,13 @@ func (o TestTableSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
+// ReloadP refetches the object from the database with an executor. Panics on error.
+func (o *TestTable) ReloadP(ctx context.Context, exec boil.ContextExecutor) {
+	if err := o.Reload(ctx, exec); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *TestTable) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -983,6 +1119,15 @@ func (o *TestTable) Reload(ctx context.Context, exec boil.ContextExecutor) error
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllP refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+// Panics on error.
+func (o *TestTableSlice) ReloadAllP(ctx context.Context, exec boil.ContextExecutor) {
+	if err := o.ReloadAll(ctx, exec); err != nil {
+		panic(boil.WrapErr(err))
+	}
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1012,6 +1157,16 @@ func (o *TestTableSlice) ReloadAll(ctx context.Context, exec boil.ContextExecuto
 	*o = slice
 
 	return nil
+}
+
+// TestTableExistsP checks if the TestTable row exists. Panics on error.
+func TestTableExistsP(ctx context.Context, exec boil.ContextExecutor, iD uint64) bool {
+	e, err := TestTableExists(ctx, exec, iD)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return e
 }
 
 // TestTableExists checks if the TestTable row exists.

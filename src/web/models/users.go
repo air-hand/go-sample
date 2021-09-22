@@ -316,6 +316,16 @@ func AddUserHook(hookPoint boil.HookPoint, userHook UserHook) {
 	}
 }
 
+// OneP returns a single user record from the query, and panics on error.
+func (q userQuery) OneP(ctx context.Context, exec boil.ContextExecutor) *User {
+	o, err := q.One(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return o
+}
+
 // One returns a single user record from the query.
 func (q userQuery) One(ctx context.Context, exec boil.ContextExecutor) (*User, error) {
 	o := &User{}
@@ -335,6 +345,16 @@ func (q userQuery) One(ctx context.Context, exec boil.ContextExecutor) (*User, e
 	}
 
 	return o, nil
+}
+
+// AllP returns all User records from the query, and panics on error.
+func (q userQuery) AllP(ctx context.Context, exec boil.ContextExecutor) UserSlice {
+	o, err := q.All(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return o
 }
 
 // All returns all User records from the query.
@@ -357,6 +377,16 @@ func (q userQuery) All(ctx context.Context, exec boil.ContextExecutor) (UserSlic
 	return o, nil
 }
 
+// CountP returns the count of all User records in the query, and panics on error.
+func (q userQuery) CountP(ctx context.Context, exec boil.ContextExecutor) int64 {
+	c, err := q.Count(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return c
+}
+
 // Count returns the count of all User records in the query.
 func (q userQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -370,6 +400,16 @@ func (q userQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64,
 	}
 
 	return count, nil
+}
+
+// ExistsP checks if the row exists in the table, and panics on error.
+func (q userQuery) ExistsP(ctx context.Context, exec boil.ContextExecutor) bool {
+	e, err := q.Exists(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return e
 }
 
 // Exists checks if the row exists in the table.
@@ -525,6 +565,17 @@ func (userL) LoadGroups(ctx context.Context, e boil.ContextExecutor, singular bo
 	return nil
 }
 
+// AddGroupsP adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.Groups.
+// Sets related.R.Users appropriately.
+// Panics on error.
+func (o *User) AddGroupsP(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Group) {
+	if err := o.AddGroups(ctx, exec, insert, related...); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
 // AddGroups adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
 // Appends related to o.R.Groups.
@@ -573,6 +624,19 @@ func (o *User) AddGroups(ctx context.Context, exec boil.ContextExecutor, insert 
 	return nil
 }
 
+// SetGroupsP removes all previously related items of the
+// user replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Users's Groups accordingly.
+// Replaces o.R.Groups with related.
+// Sets related.R.Users's Groups accordingly.
+// Panics on error.
+func (o *User) SetGroupsP(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Group) {
+	if err := o.SetGroups(ctx, exec, insert, related...); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
 // SetGroups removes all previously related items of the
 // user replacing them completely with the passed
 // in related items, optionally inserting them as new records.
@@ -597,6 +661,16 @@ func (o *User) SetGroups(ctx context.Context, exec boil.ContextExecutor, insert 
 		o.R.Groups = nil
 	}
 	return o.AddGroups(ctx, exec, insert, related...)
+}
+
+// RemoveGroupsP relationships from objects passed in.
+// Removes related items from R.Groups (uses pointer comparison, removal does not keep order)
+// Sets related.R.Users.
+// Panics on error.
+func (o *User) RemoveGroupsP(ctx context.Context, exec boil.ContextExecutor, related ...*Group) {
+	if err := o.RemoveGroups(ctx, exec, related...); err != nil {
+		panic(boil.WrapErr(err))
+	}
 }
 
 // RemoveGroups relationships from objects passed in.
@@ -675,6 +749,16 @@ func Users(mods ...qm.QueryMod) userQuery {
 	return userQuery{NewQuery(mods...)}
 }
 
+// FindUserP retrieves a single record by ID with an executor, and panics on error.
+func FindUserP(ctx context.Context, exec boil.ContextExecutor, iD uint64, selectCols ...string) *User {
+	retobj, err := FindUser(ctx, exec, iD, selectCols...)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return retobj
+}
+
 // FindUser retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindUser(ctx context.Context, exec boil.ContextExecutor, iD uint64, selectCols ...string) (*User, error) {
@@ -703,6 +787,14 @@ func FindUser(ctx context.Context, exec boil.ContextExecutor, iD uint64, selectC
 	}
 
 	return userObj, nil
+}
+
+// InsertP a single record using an executor, and panics on error. See Insert
+// for whitelist behavior description.
+func (o *User) InsertP(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) {
+	if err := o.Insert(ctx, exec, columns); err != nil {
+		panic(boil.WrapErr(err))
+	}
 }
 
 // Insert a single record using an executor.
@@ -811,6 +903,17 @@ CacheNoHooks:
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
+// UpdateP uses an executor to update the User, and panics on error.
+// See Update for more documentation.
+func (o *User) UpdateP(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) int64 {
+	rowsAff, err := o.Update(ctx, exec, columns)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
+}
+
 // Update uses an executor to update the User.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -874,6 +977,16 @@ func (o *User) Update(ctx context.Context, exec boil.ContextExecutor, columns bo
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
+// UpdateAllP updates all rows with matching column names, and panics on error.
+func (q userQuery) UpdateAllP(ctx context.Context, exec boil.ContextExecutor, cols M) int64 {
+	rowsAff, err := q.UpdateAll(ctx, exec, cols)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
+}
+
 // UpdateAll updates all rows with the specified column values.
 func (q userQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
@@ -889,6 +1002,16 @@ func (q userQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 	}
 
 	return rowsAff, nil
+}
+
+// UpdateAllP updates all rows with the specified column values, and panics on error.
+func (o UserSlice) UpdateAllP(ctx context.Context, exec boil.ContextExecutor, cols M) int64 {
+	rowsAff, err := o.UpdateAll(ctx, exec, cols)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
@@ -937,6 +1060,14 @@ func (o UserSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all user")
 	}
 	return rowsAff, nil
+}
+
+// UpsertP attempts an insert using an executor, and does an update or ignore on conflict.
+// UpsertP panics on error.
+func (o *User) UpsertP(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) {
+	if err := o.Upsert(ctx, exec, updateColumns, insertColumns); err != nil {
+		panic(boil.WrapErr(err))
+	}
 }
 
 var mySQLUserUniqueColumns = []string{
@@ -1087,6 +1218,18 @@ CacheNoHooks:
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
+// DeleteP deletes a single User record with an executor.
+// DeleteP will match against the primary key column to find the record to delete.
+// Panics on error.
+func (o *User) DeleteP(ctx context.Context, exec boil.ContextExecutor) int64 {
+	rowsAff, err := o.Delete(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
+}
+
 // Delete deletes a single User record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *User) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1123,6 +1266,16 @@ func (o *User) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, er
 	return rowsAff, nil
 }
 
+// DeleteAllP deletes all rows, and panics on error.
+func (q userQuery) DeleteAllP(ctx context.Context, exec boil.ContextExecutor) int64 {
+	rowsAff, err := q.DeleteAll(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
+}
+
 // DeleteAll deletes all matching rows.
 func (q userQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
@@ -1142,6 +1295,16 @@ func (q userQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	}
 
 	return rowsAff, nil
+}
+
+// DeleteAllP deletes all rows in the slice, using an executor, and panics on error.
+func (o UserSlice) DeleteAllP(ctx context.Context, exec boil.ContextExecutor) int64 {
+	rowsAff, err := o.DeleteAll(ctx, exec)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return rowsAff
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
@@ -1193,6 +1356,13 @@ func (o UserSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
+// ReloadP refetches the object from the database with an executor. Panics on error.
+func (o *User) ReloadP(ctx context.Context, exec boil.ContextExecutor) {
+	if err := o.Reload(ctx, exec); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *User) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1203,6 +1373,15 @@ func (o *User) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
+}
+
+// ReloadAllP refetches every row with matching primary key column values
+// and overwrites the original object slice with the newly updated slice.
+// Panics on error.
+func (o *UserSlice) ReloadAllP(ctx context.Context, exec boil.ContextExecutor) {
+	if err := o.ReloadAll(ctx, exec); err != nil {
+		panic(boil.WrapErr(err))
+	}
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1232,6 +1411,16 @@ func (o *UserSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 	*o = slice
 
 	return nil
+}
+
+// UserExistsP checks if the User row exists. Panics on error.
+func UserExistsP(ctx context.Context, exec boil.ContextExecutor, iD uint64) bool {
+	e, err := UserExists(ctx, exec, iD)
+	if err != nil {
+		panic(boil.WrapErr(err))
+	}
+
+	return e
 }
 
 // UserExists checks if the User row exists.
