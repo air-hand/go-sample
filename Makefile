@@ -10,7 +10,7 @@ build:
 	if [ $(IS_IN_CONTAINER) -eq 0 ]; then \
 		cd src; \
 		find ./ -name "go.mod" | xargs -I{} readlink -e {} | xargs -I{} dirname {} | \
-		xargs -I{} sh -c "cd {}; go mod tidy -go=1.17; go generate;"; \
+		xargs -I{} sh -c "cd {}; go mod tidy -compat=1.17; go generate;"; \
 		go build -o /go/bin/app; \
 	elif [ "$(BUILD_TARGET)" = "builder" ]; then \
 		docker compose -f docker-compose.yml -f .devcontainer/docker-compose.extend.yml build; \
