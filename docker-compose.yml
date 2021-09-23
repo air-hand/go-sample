@@ -14,6 +14,12 @@ services:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
       MARIADB_USER: &MARIADB_USER app
       MARIADB_PASSWORD: &MARIADB_PASSWORD app
+  redis:
+    image: redis:6.2.5
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - cache-store:/data
   web:
     build:
       context: .
@@ -26,6 +32,7 @@ services:
       - ~/.ssh:/home/app/.ssh:ro
     links:
       - "mariadb:db"
+      - "redis:cache"
     environment:
       TZ: *TZ
       # compat for sqlboiler
@@ -36,3 +43,4 @@ services:
 
 volumes:
   db-store:
+  cache-store:
