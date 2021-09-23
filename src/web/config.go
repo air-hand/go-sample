@@ -60,3 +60,15 @@ func NewDBConnectConfigFromEnv() *DBConnectConfig {
 		Data:     types.NewKeyValueList(),
 	}
 }
+
+type CacheConnectConfig struct {
+	Host string
+	Port uint
+}
+
+func NewCacheConnectConfigFromEnv() *CacheConnectConfig {
+	return &CacheConnectConfig{
+		Host: os.Getenv("CACHE_HOST"),
+		Port: 6379,
+	}
+}
