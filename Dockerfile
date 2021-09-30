@@ -57,7 +57,7 @@ COPY --chown=$USER:$USER src ./
 
 RUN go mod download
 
-RUN mkdir -p /go/out && go build -o /go/out/app
+RUN mkdir -p /go/out && go build -o /go/out/app || true;
 
 WORKDIR /opt/app
 
