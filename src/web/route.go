@@ -7,8 +7,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func Routes(db_config *DBConnectConfig, handler *Handler) http.Handler {
+func Routes(db_config *DBConnectConfig, cache_config *CacheConnectConfig, handler *Handler) http.Handler {
 	router := chi.NewRouter()
+	router.Use(SessionMiddleware(cache_config))
 	router.Use(DatabaseMiddleware(db_config))
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
