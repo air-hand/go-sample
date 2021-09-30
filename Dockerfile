@@ -48,8 +48,8 @@ RUN go install golang.org/x/tools/gopls@latest \
     && go install github.com/rickb777/runtemplate/v3@latest \
     && go install github.com/go-delve/delve/cmd/dlv@master \
     && mv $GOPATH/bin/dlv $GOPATH/bin/dlv-dap \
-    && go install github.com/volatiletech/sqlboiler/v4@latest \
-    && go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@latest \
+    && go install github.com/volatiletech/sqlboiler/v4@v4.6.0 \
+    && go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@v4.6.0 \
     && go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest \
     ;
 
