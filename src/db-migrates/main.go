@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
@@ -48,19 +49,17 @@ func main() {
 		fmt.Fprintf(os.Stderr,
 			`Usage: mig COMMAND
 COMMAND:
-    up      run up migrations
-    down    run down migrations
+    up          run up migrations
+    down        run down migrations
+    force {N}   force down migrations to {N}
 `)
 	}
-
 	flag.Parse()
 
 	if flag.NArg() < 1 {
 		flag.Usage()
 		return
 	}
-
-	command := flag.Arg(0)
 
 	tmpdir, err := os.MkdirTemp("", "migrations")
 	if err != nil {
@@ -87,11 +86,24 @@ COMMAND:
 	}
 	defer m.Close()
 
+	command := flag.Arg(0)
+
 	switch command {
 	case "up":
 		err = m.Up()
 	case "down":
 		err = m.Down()
+	case "force":
+		if flag.NArg() < 2 {
+			log.Fatal("The force command needs version.")
+			return
+		}
+		forceVer, err := strconv.Atoi(flag.Arg(1))
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		err = m.Force(forceVer)
 	default:
 		err = nil
 		flag.Usage()
