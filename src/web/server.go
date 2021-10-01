@@ -3,6 +3,9 @@ package web
 import (
 	"fmt"
 	"net/http"
+
+	"local.packages/web/cache"
+	"local.packages/web/db"
 )
 
 type Server struct {
@@ -23,8 +26,8 @@ func (rcv *Server) Serve() {
 		renderer: renderer,
 	}
 
-	cache_config := NewCacheConnectConfigFromEnv()
-	db_config := NewDBConnectConfigFromEnv()
+	cache_config := cache.NewCacheConnectConfigFromEnv()
+	db_config := db.NewDBConnectConfigFromEnv()
 
 	var middlewares []MiddlewareFunc
 	middlewares = append(middlewares, SessionMiddleware(cache_config))

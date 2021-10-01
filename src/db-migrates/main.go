@@ -19,7 +19,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
 	"local.packages/types"
-	"local.packages/web"
+	"local.packages/web/db"
 )
 
 //go:embed migrations/*.sql
@@ -70,9 +70,9 @@ COMMAND:
 	copyMigrationsToDir(tmpdir)
 
 	// TODO: maybe should move to another module (neither web and HERE)
-	db_config := web.NewDBConnectConfigFromEnv()
+	db_config := db.NewDBConnectConfigFromEnv()
 	db_config.Data.Add(types.KeyValue{Key: "multiStatements", Value: "true"})
-	db := web.NewDBClient(db_config)
+	db := db.NewDBClient(db_config)
 	defer db.Close()
 
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
