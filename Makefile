@@ -32,8 +32,10 @@ test:
 		echo "test should be run in container."; \
 		return; \
 	fi; \
-	find ./src -name "go.mod" | xargs -I{} readlink -e {} | xargs -I{} dirname {} | \
-	xargs -I{} sh -c "cd {}; go test -test.v -cover"; \
+	find ./src -name "*test*.go" | xargs -I{} dirname {} |\
+	sort -u | shuf |\
+	xargs -I{} readlink -e {} |\
+	xargs -I{} sh -c "cd {}; go test -test.v -shuffle on -cover"; \
 
 .PHONY: shell
 shell: export BUILD_TARGET=builder
