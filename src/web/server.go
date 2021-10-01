@@ -17,17 +17,22 @@ func NewServer(portNumber int) *Server {
 
 func (rcv *Server) Serve() {
 	config := NewAppConfig()
-	cache_config := NewCacheConnectConfigFromEnv()
-	db_config := NewDBConnectConfigFromEnv()
 
 	renderer := NewTemplateRenderer(!config.IsDebug)
 	handler := Handler{
 		renderer: renderer,
 	}
 
+	cache_config := NewCacheConnectConfigFromEnv()
+	db_config := NewDBConnectConfigFromEnv()
+
+	var middlewares []MiddlewareFunc
+	middlewares = append(middlewares, SessionMiddleware(cache_config))
+	middlewares = append(middlewares, DatabaseMiddleware(db_config))
+
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%d", rcv.PortNumber),
-		Handler: Routes(db_config, cache_config, &handler),
+		Handler: Routes(middlewares, &handler),
 	}
 
 	_ = server.ListenAndServe()
