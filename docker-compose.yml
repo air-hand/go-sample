@@ -1,12 +1,57 @@
 version: '3'
+
+x-TZ: &TZ "Asia/Tokyo"
+
 services:
+  mariadb:
+    image: mariadb:10.6.4
+    restart: always
+    volumes:
+      - type: volume
+        source: db-store
+        target: /var/lib/mysql
+    environment:
+      TZ: *TZ
+      MARIADB_DATABASE: &MARIADB_DATABASE app_db
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+      MARIADB_USER: &MARIADB_USER app
+      MARIADB_PASSWORD: &MARIADB_PASSWORD app
+  redis:
+    image: redis:6.2.5
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - type: volume
+        source: cache-store
+        target: /data
   web:
     build:
       context: .
-    command: /go/bin/app
+    command: /go/out/app
     ports:
       - "8080:80"
     volumes:
-      - ./:/opt/app
-      - ~/.gitconfig:/home/app/.gitconfig
-      - ~/.ssh:/home/app/.ssh:ro
+      - type: bind
+        source: ./
+        target: /opt/app
+      - type: bind
+        source: ~/.gitconfig
+        target: /home/app/.gitconfig
+      - type: bind
+        source: ~/.ssh
+        target: /home/app/.ssh:ro
+    links:
+      - "mariadb:db"
+      - "redis:cache"
+    environment:
+      TZ: *TZ
+      # compat for sqlboiler
+      MYSQL_USER: *MARIADB_USER
+      MYSQL_PASS: *MARIADB_PASSWORD
+      MYSQL_DBNAME: *MARIADB_DATABASE
+      MYSQL_HOST: "db"
+      CACHE_HOST: "cache"
+
+volumes:
+  db-store:
+  cache-store:
