@@ -15,6 +15,7 @@ func (t *cacheTester) clearAll() {
 
 	config := NewCacheConnectConfigFromEnv()
 	client := NewCacheClient(config)
+	defer client.Close()
 
 	err := client.FlushDB(ctx).Err()
 	if err != nil {
@@ -26,10 +27,13 @@ func (t *cacheTester) setup() {
 	t.clearAll()
 }
 
+func (t *cacheTester) teardown() {
+}
+
 func TestMain(m *testing.M) {
 	tester := &cacheTester{}
 	tester.setup()
-
 	code := m.Run()
+	tester.teardown()
 	os.Exit(code)
 }
