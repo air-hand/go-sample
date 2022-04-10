@@ -7,7 +7,9 @@ services:
     image: mariadb:10.6.4
     restart: always
     volumes:
-      - db-store:/var/lib/mysql
+      - type: volume
+        source: db-store
+        target: /var/lib/mysql
     environment:
       TZ: *TZ
       MARIADB_DATABASE: &MARIADB_DATABASE app_db
@@ -19,7 +21,9 @@ services:
     restart: always
     command: redis-server --appendonly yes
     volumes:
-      - cache-store:/data
+      - type: volume
+        source: cache-store
+        target: /data
   web:
     build:
       context: .
@@ -27,9 +31,15 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./:/opt/app
-      - ~/.gitconfig:/home/app/.gitconfig
-      - ~/.ssh:/home/app/.ssh:ro
+      - type: bind
+        source: ./
+        target: /opt/app
+      - type: bind
+        source: ~/.gitconfig
+        target: /home/app/.gitconfig
+      - type: bind
+        source: ~/.ssh
+        target: /home/app/.ssh:ro
     links:
       - "mariadb:db"
       - "redis:cache"
