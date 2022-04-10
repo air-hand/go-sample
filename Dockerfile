@@ -8,13 +8,15 @@ RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/s
     && fc-cache -fv \
     ;
 
-RUN apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc' \
-    && add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://tw1.mirror.blendbyte.net/mariadb/repo/10.6/debian bullseye main' \
-    && apt-get update -qq \
-    && apt-get install -y mariadb-client \
-    && curl -sLO https://download.redis.io/releases/redis-6.2.5.tar.gz \
+RUN curl -sLO https://download.redis.io/releases/redis-6.2.5.tar.gz \
     && tar -zxvf redis-6.2.5.tar.gz \
     && cd redis-6.2.5 && make && make install && which redis-cli \
+    ;
+
+RUN apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc' \
+    && add-apt-repository 'deb [arch=amd64,i386,arm64,ppc64el] https://mirror.yongbok.net/mariadb/repo/10.6/debian bullseye main' \
+    && apt-get update -qq \
+    && apt-get install -y mariadb-client \
     ;
 
 #ENV USER=app \
