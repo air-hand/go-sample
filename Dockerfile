@@ -3,7 +3,6 @@ FROM golang:1.17-bullseye as builder
 RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update -qq \
     && apt-get install -y software-properties-common dirmngr apt-file \
-    && apt-get install -y man-db git tig vim less bash sudo \
     && apt-get install -y fontconfig fonts-noto-cjk \
     && fc-cache -fv \
     ;
@@ -35,13 +34,6 @@ USER $USER
 
 #ENV HOME=/home/$USER
 ENV HOME=/$USER
-
-COPY --chown=$USER:$USER .bashrc .vimrc $HOME/
-
-RUN curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash \
-    && curl -fsSL https://raw.github.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh \
-    && chmod a+x ~/.git-* \
-    ;
 
 WORKDIR /opt/app/src
 

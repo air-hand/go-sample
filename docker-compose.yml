@@ -34,12 +34,14 @@ services:
       - type: bind
         source: ./
         target: /opt/app
-      - type: bind
-        source: ~/.gitconfig
-        target: /home/app/.gitconfig
-      - type: bind
-        source: ~/.ssh
-        target: /home/app/.ssh:ro
+      # By default, .gitconfig on host(windows) is shared by remote-containers.
+#      - type: bind
+#        source: ~/.gitconfig
+#        target: /home/app/.gitconfig
+      # The ssh-keys on open-ssh-agent (named pipe) are shared by remote-containers.
+#      - type: bind
+#        source: ~/.ssh
+#        target: /home/app/.ssh:ro
     links:
       - "mariadb:db"
       - "redis:cache"

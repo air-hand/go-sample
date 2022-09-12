@@ -4,6 +4,7 @@
     "../docker-compose.yml",
     "./docker-compose.extend.yml",
   ],
+  "postCreateCommand": ["bash", "-i", "./.devcontainer/postCreateCommand.sh"],
   "service": "web",
   "workspaceFolder": "/opt/app/",
   "extensions": [
@@ -19,5 +20,10 @@
     },
     "html.suggest.html5": true
   },
+//  "features": {
+//    "ghcr.io/devcontainers/features/git:1": {
+//      "version": "latest"
+//    }
+//  },
   "shutdownAction": "stopCompose",
 }
